@@ -49,8 +49,11 @@ class ServerStartCommand extends Command {
         if (!$noreload) {
             $watcher = new LoopResourceWatcher($loop);
             $watcher->track('src', realpath("{$this->applicationPath}/src"));
-            $watcher->track('resources.config', realpath("{$this->applicationPath}/resources/config"));
-            $watcher->track('lib', realpath("{$this->applicationPath}/lib"));
+            
+            $config = realpath("{$this->applicationPath}/resources/config");
+            if ($config) {
+                $watcher->track('resources.config', $config);
+            }
 
             $restartServerFunction = function (FilesystemEvent $event) use ($loop, &$process, $cmd) {
                 $process->terminate(9);
